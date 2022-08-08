@@ -28,6 +28,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber
     implementation group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '8.12.53'
+    // https://mvnrepository.com/artifact/org.mapstruct/mapstruct
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.2.Final'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.7.2'
 
 }
 
