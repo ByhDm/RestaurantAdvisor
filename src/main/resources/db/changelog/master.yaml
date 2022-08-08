@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: dmitriy.bykhov
+      changes:
+        - sqlFile:
+            path: \db\changelog\change_sets\tables\restaurants.sql
+  - changeSet:
+      id: 2
+      author: dmitriy.bykhov
+      changes:
+        - sqlFile:
+            path: \db\changelog\change_sets\tables\reviews.sql
+  - changeSet:
+      id: 3
+      author: dmitriy.bykhov
+      changes:
+        - sqlFile:
+            path: \db\changelog\change_sets\contentTables\contentRestaurants.sql
+  - changeSet:
+      id: 4
+      author: dmitriy.bykhov
+      changes:
+        - sqlFile:
+            path: \db\changelog\change_sets\contentTables\contentReviews.sql
