@@ -4,6 +4,7 @@ import com.example.restaurantadvisor.RestaurantAdvisorApplicationTests;
 import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.FoundationDateIsExpiredException;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
+import com.example.restaurantadvisor.repository.RestaurantRepository;
 import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +44,12 @@ public class RestaurantServiceTest extends RestaurantAdvisorApplicationTests {
     }*/
 
     @Test
-    void getAll() {
+    void getAll() throws RestaurantNotFoundException {
         assertNotNull(restaurantService.getAllRestaurants());
-        assertEquals("Astoria", restaurantService.getAllRestaurants().get(0).getName());
-        assertEquals("+79998888888", restaurantService.getAllRestaurants().get(0).getPhoneNumber());
-        assertEquals("astoria@astoria.com", restaurantService.getAllRestaurants().get(0).getEmail());
-        assertEquals("Test description 1", restaurantService.getAllRestaurants().get(0).getDescription());
+        assertEquals("Astoria", restaurantService.getRestaurantById(1L).getName());
+        assertEquals("+79998888888", restaurantService.getRestaurantById(1L).getPhoneNumber());
+        assertEquals("astoria@astoria.com", restaurantService.getRestaurantById(1L).getEmail());
+        assertEquals("Test description 1", restaurantService.getRestaurantById(1L).getDescription());
     }
 
     @Test

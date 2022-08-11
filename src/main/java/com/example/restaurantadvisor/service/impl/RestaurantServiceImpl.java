@@ -46,20 +46,20 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Restaurant getRestaurantByName(String name) {
-
-        return restaurantRepository.findByName(name);
+        Restaurant restaurant = restaurantRepository.findFirstByName(name);
+        return restaurantRepository.save(restaurant);
     }
 
     @Override
     public void updateDescriptionRestaurantByName(String name, String description) {
-        Restaurant restaurant = restaurantRepository.findByName(name);
+        Restaurant restaurant = restaurantRepository.findFirstByName(name);
         restaurant.setDescription(description);
         restaurantRepository.save(restaurant); //     @Transactional
     }
 
     @Override
     public String getDescriptionRestaurantByName(String name) {
-        Restaurant restaurant = restaurantRepository.findByName(name);
+        Restaurant restaurant = restaurantRepository.findFirstByName(name);
         return restaurant.getDescription();
     }
 
@@ -72,18 +72,18 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public void addPhoneByRestaurantName(String name, String phone) {
-        Restaurant restaurant = restaurantRepository.findByName(name);
+        Restaurant restaurant = restaurantRepository.findFirstByName(name);
         try {
             restaurant.setPhoneNumber(PhoneUtil.reformatRuTelephone(phone));
-            restaurantRepository.save(restaurant);
         } catch (NumberParseException e) {
             e.printStackTrace();
         }
+        restaurantRepository.save(restaurant);
     }
 
     @Override
     public void addEmailAddressByName(String name, String emailAddress) {
-        Restaurant restaurant = restaurantRepository.findByName(name);
+        Restaurant restaurant = restaurantRepository.findFirstByName(name);
         if (EmailUtil.checkValid(emailAddress)) {
             restaurant.setEmail(emailAddress);
             restaurantRepository.save(restaurant);

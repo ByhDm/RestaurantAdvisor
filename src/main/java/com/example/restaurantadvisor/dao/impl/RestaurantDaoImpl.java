@@ -43,7 +43,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
 
     @Override
     public Restaurant addRestaurant(Restaurant restaurant) {
-        String getQuery = "INSERT INTO restaurants (name, phoneNumber, email, description, creationDate) VALUES (?, ?, ?, ?, ?)";
+        String getQuery = "INSERT INTO restaurants (name, phone_number, email, description, creation_date) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(getQuery)) {
             preparedStatement.setString(1, restaurant.getName());
             preparedStatement.setString(2, restaurant.getPhoneNumber());
