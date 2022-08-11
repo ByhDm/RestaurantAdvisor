@@ -9,6 +9,7 @@ import com.example.restaurantadvisor.service.RestaurantService;
 import com.example.restaurantadvisor.util.EmailUtil;
 import com.example.restaurantadvisor.util.PhoneUtil;
 import com.google.i18n.phonenumbers.NumberParseException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,8 +26,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<Restaurant> getAllRestaurants() {
-
-        return restaurantRepository.findAll();
+        return restaurantRepository.findAll(Sort.by("name"));
     }
 
     @Override

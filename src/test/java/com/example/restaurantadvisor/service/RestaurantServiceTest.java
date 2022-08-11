@@ -4,16 +4,15 @@ import com.example.restaurantadvisor.RestaurantAdvisorApplicationTests;
 import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.FoundationDateIsExpiredException;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
-import com.example.restaurantadvisor.repository.RestaurantRepository;
-import org.junit.jupiter.api.*;
-import org.mockito.MockedStatic;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Answers.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.mockStatic;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -44,12 +43,13 @@ public class RestaurantServiceTest extends RestaurantAdvisorApplicationTests {
     }*/
 
     @Test
-    void getAll() throws RestaurantNotFoundException {
-        assertNotNull(restaurantService.getAllRestaurants());
-        assertEquals("Astoria", restaurantService.getRestaurantById(1L).getName());
-        assertEquals("+79998888888", restaurantService.getRestaurantById(1L).getPhoneNumber());
-        assertEquals("astoria@astoria.com", restaurantService.getRestaurantById(1L).getEmail());
-        assertEquals("Test description 1", restaurantService.getRestaurantById(1L).getDescription());
+    void getAll() {
+        List<Restaurant> allRestaurants = restaurantService.getAllRestaurants();
+        assertNotNull(allRestaurants);
+        assertEquals("Astoria", allRestaurants.get(0).getName());
+        assertEquals("+79998888888", allRestaurants.get(0).getPhoneNumber());
+        assertEquals("astoria@astoria.com", allRestaurants.get(0).getEmail());
+        assertEquals("Test description 1", allRestaurants.get(0).getDescription());
     }
 
     @Test
@@ -97,14 +97,11 @@ public class RestaurantServiceTest extends RestaurantAdvisorApplicationTests {
 
     @Test
     void addRestaurantByNameAndCreationDate() throws FoundationDateIsExpiredException {
-        MockedStatic<LocalDate> localDateMockedStatic = mockStatic(LocalDate.class, CALLS_REAL_METHODS);
-        LocalDate defaultDateNow = LocalDate.of(2015, 4, 17);
-        localDateMockedStatic.when(LocalDate::now).thenReturn(defaultDateNow);
-
         Assertions.assertThrowsExactly(FoundationDateIsExpiredException.class,
-                () -> restaurantService.addRestaurantByNameAndCreationDate("Astoria", LocalDate.of(2016, 4, 17)));
+                () -> restaurantService.addRestaurantByNameAndCreationDate("Astoria", LocalDate.now().plusDays(5)));
 
-        restaurantService.addRestaurantByNameAndCreationDate("Astoria", LocalDate.of(2015, 4, 17));
-        assertEquals(LocalDate.of(2015, 4, 17), restaurantService.getCreationDateByRestaurantId(1L));
+        LocalDate creationDate = LocalDate.now().minusDays(5);
+        Restaurant astoria = restaurantService.addRestaurantByNameAndCreationDate("Astoria", creationDate);
+        assertTrue(creationDate.isEqual(restaurantService.getCreationDateByRestaurantId(astoria.getId())));
     }
 }

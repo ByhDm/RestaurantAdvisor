@@ -5,7 +5,6 @@ import com.example.restaurantadvisor.service.RestaurantService;
 import com.example.restaurantadvisor.service.RestaurantServiceTest;
 import com.example.restaurantadvisor.service.ReviewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,9 +30,10 @@ public class ReviewControllerTest extends RestaurantServiceTest {
     @Autowired
     protected RestaurantService restaurantService;
 
+    @Autowired
+    protected ObjectMapper objectMapper;
     @Test
     void getReviewsRestaurantById() throws Exception {
-        ObjectMapper objectMapper = new JsonMapper();
         String expected = objectMapper.writeValueAsString(reviewService.getReviewsRestaurantById(1L));
         this.mockMvc.perform(get("/review/{id}", 1L))
                 .andDo(print())
@@ -55,7 +55,6 @@ public class ReviewControllerTest extends RestaurantServiceTest {
                 .restaurant_id(restaurantService.getRestaurantByName("Donald Duck").getId())
                 .rating(1)
                 .build();
-        ObjectMapper objectMapper = new JsonMapper();
         String obj = objectMapper.writeValueAsString(review);
         this.mockMvc.perform(post("/review/add")
                         .contentType(MediaType.APPLICATION_JSON).content(obj))
