@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
@@ -30,28 +31,31 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant addRestaurant(Restaurant restaurant) {
+    public Restaurant addRestaurant(Restaurant restaurant) throws NumberParseException {
         String phone = restaurant.getPhoneNumber();
+        // лучше оставлять поле пусьым, если не пришел телефон в ДТО
         if (phone == null || phone.equals("default")) {
             restaurant.setPhoneNumber("default");
         } else {
-            try {
-                restaurant.setPhoneNumber(PhoneUtil.reformatRuTelephone(phone));
-            } catch (NumberParseException e) {
-                throw new RuntimeException(e);
-            }
+            restaurant.setPhoneNumber(PhoneUtil.reformatRuTelephone(phone));
         }
         return restaurantRepository.save(restaurant);
     }
 
     @Override
-    public Restaurant getRestaurantByName(String name) {
+    public Restaurant getRestaurantByName(String name) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
-        return restaurantRepository.save(restaurant);
+        if (restaurant == null) {
+            throw new RestaurantNotFoundException();
+        }
+        return restaurant;
     }
 
     @Override
     public void updateDescriptionRestaurantByName(String name, String description) {
+        // лучше апдейтить по id (или сделать имя уникальным)
+        // апдейт сущности по не уникальному полю приведет к тому, что вы не знаете какой ресторан отредактировали
+        //добавить обратку если нет ресторана по этому имени
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
         restaurant.setDescription(description);
         restaurantRepository.save(restaurant); //     @Transactional
@@ -59,6 +63,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public String getDescriptionRestaurantByName(String name) {
+        //добавить обратку если нет ресторана по этому имени
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
         return restaurant.getDescription();
     }
@@ -72,6 +77,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public void addPhoneByRestaurantName(String name, String phone) {
+        //добавить обратку если нет ресторана по этому имени
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
         try {
             restaurant.setPhoneNumber(PhoneUtil.reformatRuTelephone(phone));
@@ -82,22 +88,18 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void addEmailAddressByName(String name, String emailAddress) {
+    public void addEmailAddressByName(String name, String emailAddress) throws IncorrectEmailAddressException {
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
         if (EmailUtil.checkValid(emailAddress)) {
             restaurant.setEmail(emailAddress);
             restaurantRepository.save(restaurant);
         } else {
-            try {
-                throw new IncorrectEmailAddressException("write correct Email Address");
-            } catch (IncorrectEmailAddressException e) {
-                e.printStackTrace();
-            }
+            throw new IncorrectEmailAddressException("write correct Email Address");
         }
     }
 
     @Override
-    public Restaurant addRestaurantByNameAndCreationDate(String name, LocalDate creationDate) throws FoundationDateIsExpiredException {
+    public Restaurant addRestaurantByNameAndCreationDate(String name, LocalDate creationDate) throws FoundationDateIsExpiredException, NumberParseException {
         LocalDate dateNow = LocalDate.now();
         if (creationDate == null || dateNow.isBefore(creationDate)) {
             throw new FoundationDateIsExpiredException(name, creationDate);
@@ -110,8 +112,12 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public LocalDate getCreationDateByRestaurantId(Long id) {
-        Restaurant restaurantById = restaurantRepository.findById(id).get();
+    public LocalDate getCreationDateByRestaurantId(Long id) throws RestaurantNotFoundException {
+        Optional<Restaurant> byId = restaurantRepository.findById(id);
+        if(byId.isEmpty()) {
+            throw new RestaurantNotFoundException();
+        }
+        Restaurant restaurantById = byId.get();
         return restaurantById.getDate();
     }
 }

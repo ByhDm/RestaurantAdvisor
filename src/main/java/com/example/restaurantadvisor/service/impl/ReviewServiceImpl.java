@@ -2,6 +2,7 @@ package com.example.restaurantadvisor.service.impl;
 
 import com.example.restaurantadvisor.dao.ReviewDao;
 import com.example.restaurantadvisor.entity.Review;
+import com.example.restaurantadvisor.exception.IncorrectEmailAddressException;
 import com.example.restaurantadvisor.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

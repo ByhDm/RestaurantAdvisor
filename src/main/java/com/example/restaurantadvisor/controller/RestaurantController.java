@@ -5,7 +5,7 @@ import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.example.restaurantadvisor.mapper.RestaurantMapper;
 import com.example.restaurantadvisor.service.RestaurantService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.i18n.phonenumbers.NumberParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,11 +20,14 @@ import java.util.Map;
 @RequestMapping("/restaurant")
 public class RestaurantController {
 
-    @Autowired
-    private RestaurantService restaurantService;
+    private final RestaurantService restaurantService;
 
-    @Autowired
-    private RestaurantMapper restaurantMapper;
+    private final RestaurantMapper restaurantMapper;
+
+    public RestaurantController(RestaurantService restaurantService, RestaurantMapper restaurantMapper) {
+        this.restaurantService = restaurantService;
+        this.restaurantMapper = restaurantMapper;
+    }
 
     @GetMapping("/all")
     public List<RestaurantOutDTO> getAllRestaurants() {
@@ -33,12 +36,12 @@ public class RestaurantController {
     }
 
     @PostMapping("/add")
-    public void addRestaurant(@RequestBody @Valid Restaurant restaurant) {
+    public void addRestaurant(@RequestBody @Valid Restaurant restaurant) throws NumberParseException {
         restaurantService.addRestaurant(restaurant);
     }
 
     @GetMapping("/name/{name}")
-    public RestaurantOutDTO getRestaurantByName(@PathVariable String name) {
+    public RestaurantOutDTO getRestaurantByName(@PathVariable String name) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantService.getRestaurantByName(name);
         return restaurantMapper.restaurantToRestaurantOutDTO(restaurant);
     }
@@ -49,7 +52,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/description/{name}")
-    public String getDescriptionRestaurantByName(@PathVariable String name) {
+    public String getDescriptionRestaurantByName(@PathVariable String name) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantService.getRestaurantByName(name);
         return restaurantMapper.restaurantToRestaurantOutDTO(restaurant).getDescription();
     }
