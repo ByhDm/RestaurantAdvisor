@@ -4,7 +4,6 @@ import com.example.restaurantadvisor.dto.out.RestaurantOutDTO;
 import com.example.restaurantadvisor.service.RestaurantService;
 import com.example.restaurantadvisor.service.RestaurantServiceTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,9 +26,11 @@ public class RestaurantControllerTest extends RestaurantServiceTest {
     @Autowired
     private RestaurantService restaurantService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
     void getAllRestaurants() throws Exception {
-        ObjectMapper objectMapper = new JsonMapper();
         String expected = objectMapper.writeValueAsString(restaurantService.getAllRestaurants());
         this.mockMvc.perform(get("/restaurant/all"))
                 .andDo(print())
@@ -54,9 +55,8 @@ public class RestaurantControllerTest extends RestaurantServiceTest {
                 .phoneNumber("+79992222222")
                 .email("test@test.com")
                 .description("test")
-                .date(LocalDate.of(2011, 01, 11))
+                .date(LocalDate.of(2011, 1, 11))
                 .build();
-        ObjectMapper objectMapper = new JsonMapper();
         String obj = objectMapper.writeValueAsString(restaurant);
         this.mockMvc.perform(post("/restaurant/add")
                         .contentType(MediaType.APPLICATION_JSON).content(obj))
@@ -65,7 +65,7 @@ public class RestaurantControllerTest extends RestaurantServiceTest {
 
     @Test
     void updateDescription() throws Exception {
-        this.mockMvc.perform(put("/restaurant/update/{name}/{description}", "mac", "description"))
+        this.mockMvc.perform(put("/restaurant/update/{name}/{description}", "Astoria", "description"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -75,12 +75,11 @@ public class RestaurantControllerTest extends RestaurantServiceTest {
         RestaurantOutDTO restaurant = RestaurantOutDTO.builder()
                 .id(restaurantService.getAllRestaurants().get(0).getId())
                 .name("Astoria")
-                .phoneNumber("+79998888888")
+                .phoneNumber("+79990000000")
                 .email("astoria@astoria.com")
                 .description("Test description 1")
-                .date(LocalDate.of(2015, 04, 17))
+                .date(LocalDate.of(2015, 1, 13))
                 .build();
-        ObjectMapper objectMapper = new JsonMapper();
         String expected = objectMapper.writeValueAsString(restaurant);
         this.mockMvc.perform(get("/restaurant/name/{name}", "Astoria"))
                 .andDo(print())

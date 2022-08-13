@@ -9,10 +9,12 @@ import com.example.restaurantadvisor.service.RestaurantService;
 import com.example.restaurantadvisor.util.EmailUtil;
 import com.example.restaurantadvisor.util.PhoneUtil;
 import com.google.i18n.phonenumbers.NumberParseException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
@@ -25,93 +27,112 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public List<Restaurant> getAllRestaurants() {
-
-        return restaurantRepository.findAll();
+        return restaurantRepository.findAll(Sort.by("name"));
     }
 
     @Override
-    public Restaurant addRestaurant(Restaurant restaurant) {
+    public Restaurant addRestaurant(Restaurant restaurant) throws NumberParseException {
         String phone = restaurant.getPhoneNumber();
-        if (phone == null || phone.equals("default")) {
-            restaurant.setPhoneNumber("default");
+        if (phone == null || phone.equals("")) {
+            restaurant.setPhoneNumber("");
         } else {
-            try {
-                restaurant.setPhoneNumber(PhoneUtil.reformatRuTelephone(phone));
-            } catch (NumberParseException e) {
-                throw new RuntimeException(e);
-            }
+            restaurant.setPhoneNumber(PhoneUtil.reformatRuTelephone(phone));
         }
         return restaurantRepository.save(restaurant);
     }
 
     @Override
-    public Restaurant getRestaurantByName(String name) {
+    public Restaurant getRestaurantByName(String name) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
-        return restaurantRepository.save(restaurant);
+        if (restaurant == null) {
+            throw new RestaurantNotFoundException();
+        } else {
+            return restaurant;
+        }
     }
 
     @Override
-    public void updateDescriptionRestaurantByName(String name, String description) {
+    public void updateDescriptionRestaurantByName(String name, String description) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
-        restaurant.setDescription(description);
-        restaurantRepository.save(restaurant); //     @Transactional
+        if (restaurant == null) {
+            throw new RestaurantNotFoundException();
+        } else {
+            restaurant.setDescription(description);
+            restaurantRepository.save(restaurant); //     @Transactional
+        }
     }
 
     @Override
-    public String getDescriptionRestaurantByName(String name) {
+    public String getDescriptionRestaurantByName(String name) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
-        return restaurant.getDescription();
+        if (restaurant == null) {
+            throw new RestaurantNotFoundException();
+        } else {
+            return restaurant.getDescription();
+        }
     }
 
     @Override
     public Restaurant getRestaurantById(Long id) throws RestaurantNotFoundException {
-        Restaurant restaurant = restaurantRepository.findById(id).get();
-        if (restaurant.getId() == null) throw new RestaurantNotFoundException();
-        return restaurant;
-    }
-
-    @Override
-    public void addPhoneByRestaurantName(String name, String phone) {
-        Restaurant restaurant = restaurantRepository.findFirstByName(name);
-        try {
-            restaurant.setPhoneNumber(PhoneUtil.reformatRuTelephone(phone));
-        } catch (NumberParseException e) {
-            e.printStackTrace();
+        Optional<Restaurant> byId = restaurantRepository.findById(id);
+        if (byId.isEmpty()) {
+            throw new RestaurantNotFoundException();
+        } else {
+            return byId.get();
         }
-        restaurantRepository.save(restaurant);
     }
 
     @Override
-    public void addEmailAddressByName(String name, String emailAddress) {
+    public void addPhoneByRestaurantName(String name, String phone) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
-        if (EmailUtil.checkValid(emailAddress)) {
-            restaurant.setEmail(emailAddress);
-            restaurantRepository.save(restaurant);
+        if (restaurant == null) {
+            throw new RestaurantNotFoundException();
         } else {
             try {
-                throw new IncorrectEmailAddressException("write correct Email Address");
-            } catch (IncorrectEmailAddressException e) {
+                restaurant.setPhoneNumber(PhoneUtil.reformatRuTelephone(phone));
+            } catch (NumberParseException e) {
                 e.printStackTrace();
+            }
+            restaurantRepository.save(restaurant);
+        }
+    }
+
+    @Override
+    public void addEmailAddressByName(String name, String emailAddress) throws RestaurantNotFoundException, IncorrectEmailAddressException {
+        Restaurant restaurant = restaurantRepository.findFirstByName(name);
+        if (restaurant == null) {
+            throw new RestaurantNotFoundException();
+        } else {
+            if (EmailUtil.checkValid(emailAddress)) {
+                restaurant.setEmail(emailAddress);
+                restaurantRepository.save(restaurant);
+            } else {
+                throw new IncorrectEmailAddressException("write correct Email Address");
             }
         }
     }
 
     @Override
-    public Restaurant addRestaurantByNameAndCreationDate(String name, LocalDate creationDate) throws FoundationDateIsExpiredException {
+    public Restaurant addRestaurantByNameAndCreationDate(String name, LocalDate creationDate) throws FoundationDateIsExpiredException, NumberParseException {
         LocalDate dateNow = LocalDate.now();
         if (creationDate == null || dateNow.isBefore(creationDate)) {
             throw new FoundationDateIsExpiredException(name, creationDate);
+        } else {
+            Restaurant restaurant = new Restaurant();
+            restaurant.setName(name);
+            restaurant.setDate(creationDate);
+            return addRestaurant(restaurant);
         }
-        Restaurant restaurant = new Restaurant();
-        restaurant.setName(name);
-        restaurant.setDate(creationDate);
-        return addRestaurant(restaurant);
-
     }
 
     @Override
-    public LocalDate getCreationDateByRestaurantId(Long id) {
-        Restaurant restaurantById = restaurantRepository.findById(id).get();
-        return restaurantById.getDate();
+    public LocalDate getCreationDateByRestaurantId(Long id) throws RestaurantNotFoundException {
+        Optional<Restaurant> byId = restaurantRepository.findById(id);
+        if (byId.isEmpty()) {
+            throw new RestaurantNotFoundException();
+        } else {
+            Restaurant restaurantById = byId.get();
+            return restaurantById.getDate();
+        }
     }
 }

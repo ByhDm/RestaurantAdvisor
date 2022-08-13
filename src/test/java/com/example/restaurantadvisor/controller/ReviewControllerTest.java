@@ -5,14 +5,11 @@ import com.example.restaurantadvisor.service.RestaurantService;
 import com.example.restaurantadvisor.service.RestaurantServiceTest;
 import com.example.restaurantadvisor.service.ReviewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,31 +28,33 @@ public class ReviewControllerTest extends RestaurantServiceTest {
     @Autowired
     protected RestaurantService restaurantService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+
     @Test
-    void getReviewsRestaurantById() throws Exception {
-        ObjectMapper objectMapper = new JsonMapper();
-        String expected = objectMapper.writeValueAsString(reviewService.getReviewsRestaurantById(1L));
-        this.mockMvc.perform(get("/review/{id}", 1L))
+    void getReviewsRestaurantByName() throws Exception {
+        String expected = objectMapper.writeValueAsString(reviewService.getReviewsRestaurantByName("Astoria"));
+        this.mockMvc.perform(get("/review/{name}", "Astoria"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(expected));
     }
 
     @Test
-    void getRatingRestaurantById() throws Exception {
-        Map<String, Integer> ratingRestaurantById = reviewService.getRatingRestaurantById(1L);
-        this.mockMvc.perform(get("/review/rating/{id}", 1L))
+    void getRatingRestaurantByName() throws Exception {
+       Double ratingRestaurantById = reviewService.getRatingRestaurantByName("Astoria");
+        this.mockMvc.perform(get("/review/rating/{name}", "Astoria"))
                 .andDo(print())
-                .andExpect(content().json(String.valueOf(ratingRestaurantById)));
+                .andExpect(content().string(Double.toString(ratingRestaurantById)));
     }
 
     @Test
     void addReview() throws Exception {
-        ReviewOutDTO review = ReviewOutDTO.builder().review("Test review 3")
-                .restaurant_id(restaurantService.getRestaurantByName("Donald Duck").getId())
-                .rating(1)
+        ReviewOutDTO review = ReviewOutDTO.builder().review("Test review 1")
+                .restaurant_id(restaurantService.getRestaurantByName("Astoria"))
+                .rating(1.0)
                 .build();
-        ObjectMapper objectMapper = new JsonMapper();
         String obj = objectMapper.writeValueAsString(review);
         this.mockMvc.perform(post("/review/add")
                         .contentType(MediaType.APPLICATION_JSON).content(obj))

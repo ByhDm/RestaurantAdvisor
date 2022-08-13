@@ -3,35 +3,37 @@ package com.example.restaurantadvisor.controller;
 import com.example.restaurantadvisor.entity.Review;
 import com.example.restaurantadvisor.mapper.ReviewMapper;
 import com.example.restaurantadvisor.service.ReviewService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/review")
 public class ReviewController {
 
-    @Autowired
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
 
-    @Autowired
-    private ReviewMapper reviewMapper;
+    private final ReviewMapper reviewMapper;
 
-    @GetMapping("/{id}")
-    public Map<String, List<String>> getReviewsRestaurantById(@PathVariable Long id) {
-        Map<String, List<String>> reviewsRestaurantById = reviewService.getReviewsRestaurantById(id);
+    public ReviewController(ReviewService reviewService, ReviewMapper reviewMapper) {
+        this.reviewService = reviewService;
+        this.reviewMapper = reviewMapper;
+    }
+
+    @GetMapping("/{name}")
+    public List<String> getReviewsRestaurantByName(@PathVariable String name){
+        List<String> reviewsRestaurantById = reviewService.getReviewsRestaurantByName(name);
         return reviewMapper.reviewsToReviewsOutDTO(reviewsRestaurantById);
     }
 
-    @GetMapping("/rating/{id}")
-    Map<String, Integer> getRatingRestaurantById(@PathVariable Long id) {
-        return reviewService.getRatingRestaurantById(id);
+    @GetMapping("/rating/{name}")
+    Double getRatingRestaurantByName(@PathVariable String name) {
+        return reviewService.getRatingRestaurantByName(name);
     }
 
     @PostMapping("/add")
-    public void addReview(@RequestBody Review review) {
+    public void addReview(@RequestBody @Valid Review review) {
         reviewService.addReview(review);
     }
 
