@@ -7,10 +7,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -29,9 +32,10 @@ public class RestaurantControllerTest extends RestaurantServiceTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+//    @Transactional
     @Test
     void getAllRestaurants() throws Exception {
-        String expected = objectMapper.writeValueAsString(restaurantService.getAllRestaurants());
+        String expected = objectMapper.writeValueAsString(restaurantService.getAllRestaurants(Pageable.unpaged()));
         this.mockMvc.perform(get("/restaurant/all"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -73,7 +77,7 @@ public class RestaurantControllerTest extends RestaurantServiceTest {
     @Test
     void getRestaurantByName() throws Exception {
         RestaurantOutDTO restaurant = RestaurantOutDTO.builder()
-                .id(restaurantService.getAllRestaurants().get(0).getId())
+                .id(restaurantService.getAllRestaurants(Pageable.unpaged()).toList().get(0).getId())
                 .name("Astoria")
                 .phoneNumber("+79990000000")
                 .email("astoria@astoria.com")

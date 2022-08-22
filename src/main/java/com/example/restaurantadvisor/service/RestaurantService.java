@@ -5,13 +5,15 @@ import com.example.restaurantadvisor.exception.FoundationDateIsExpiredException;
 import com.example.restaurantadvisor.exception.IncorrectEmailAddressException;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.google.i18n.phonenumbers.NumberParseException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface RestaurantService {
 
-    List<Restaurant> getAllRestaurants();
+    Page<Restaurant> getAllRestaurants(Pageable pageable);
     Restaurant addRestaurant(Restaurant restaurant) throws NumberParseException;
     Restaurant getRestaurantByName(String name) throws RestaurantNotFoundException;
     void updateDescriptionRestaurantByName(String name, String description) throws RestaurantNotFoundException;

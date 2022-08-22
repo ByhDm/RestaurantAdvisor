@@ -9,6 +9,8 @@ import com.example.restaurantadvisor.service.RestaurantService;
 import com.example.restaurantadvisor.util.EmailUtil;
 import com.example.restaurantadvisor.util.PhoneUtil;
 import com.google.i18n.phonenumbers.NumberParseException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +28,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<Restaurant> getAllRestaurants() {
-        return restaurantRepository.findAll(Sort.by("name"));
+    public Page<Restaurant> getAllRestaurants(Pageable pageable) {
+
+        return restaurantRepository.findAll(pageable);
     }
 
     @Override

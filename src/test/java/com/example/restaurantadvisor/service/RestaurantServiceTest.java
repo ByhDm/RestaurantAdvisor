@@ -9,6 +9,7 @@ import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +35,7 @@ public class RestaurantServiceTest extends RestaurantAdvisorApplicationTests {
         restaurantService.addRestaurant(restaurant);
         Review review = new Review();
         review.setReview("Good restaurant");
-        review.setRestaurant_id(restaurantService.getAllRestaurants().get(0));
+        review.setRestaurant_id(restaurantService.getAllRestaurants(Pageable.unpaged()).toList().get(0));
         review.setRating(4);
         reviewService.addReview(review);
     }
@@ -46,7 +47,7 @@ public class RestaurantServiceTest extends RestaurantAdvisorApplicationTests {
 
     @Test
     void getAll() {
-        List<Restaurant> allRestaurants = restaurantService.getAllRestaurants();
+        List<Restaurant> allRestaurants = restaurantService.getAllRestaurants(Pageable.unpaged()).toList();
         assertNotNull(allRestaurants);
         assertEquals("Astoria", allRestaurants.get(0).getName());
         assertEquals("+79990000000", allRestaurants.get(0).getPhoneNumber());

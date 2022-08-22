@@ -6,6 +6,9 @@ import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.example.restaurantadvisor.mapper.RestaurantMapper;
 import com.example.restaurantadvisor.service.RestaurantService;
 import com.google.i18n.phonenumbers.NumberParseException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,9 +32,9 @@ public class RestaurantController {
     }
 
     @GetMapping("/all")
-    public List<RestaurantOutDTO> getAllRestaurants() {
-        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
-        return restaurantMapper.restaurantsToRestaurantsOutDTO(restaurants);
+    public Page<RestaurantOutDTO> getAllRestaurants(@PageableDefault(sort = "name") Pageable pageable) {
+        Page<Restaurant> restaurants = restaurantService.getAllRestaurants(pageable);
+        return restaurants.map(restaurantMapper::restaurantToRestaurantOutDTO);
     }
 
     @PostMapping("/add")
