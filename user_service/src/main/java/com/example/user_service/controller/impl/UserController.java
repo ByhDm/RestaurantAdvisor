@@ -3,7 +3,9 @@ package com.example.user_service.controller.impl;
 import com.example.user_service.controller.UserControllerI;
 import com.example.user_service.dto.in.UserInDTO;
 import com.example.user_service.dto.out.UserOutDTO;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class UserController implements UserControllerI {
     @Override
     public UserOutDTO createUser(UserInDTO userInDTO) {

@@ -5,5 +5,5 @@ create table users
     surname           varchar(20)  not null,
     lastname          varchar(20)  not null,
     email             varchar(255) not null,
-    registration_date date         not null default now()
+    registration_date timestamp default CURRENT_TIMESTAMP
 )
