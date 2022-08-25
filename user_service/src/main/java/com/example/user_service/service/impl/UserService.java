@@ -1,5 +1,6 @@
 package com.example.user_service.service.impl;
 
+import com.example.user_service.dto.in.ChangePasswordUserInDTO;
 import com.example.user_service.dto.in.UserInDTO;
 import com.example.user_service.dto.out.UserOutDTO;
 import com.example.user_service.entity.User;
@@ -62,5 +63,15 @@ public class UserService implements UserServiceI {
             throw new UserNotFoundException();
         }
         return userMapper.userToUserOutDTO(byId.get());
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(ChangePasswordUserInDTO changePasswordUserInDTO) {
+        User byEmail = userRepository.findByEmail(changePasswordUserInDTO.getEmail());
+        if (!byEmail.getPassword().equals(changePasswordUserInDTO.getOldPassword())) {
+            throw new RuntimeException();
+        }
+        byEmail.setPassword(changePasswordUserInDTO.getNewPassword());
     }
 }

@@ -37,6 +37,16 @@ public class User {
     @CreationTimestamp
     private LocalDateTime registrationDate;
 
+    @Column(name = "password")
+    private String password;
+
+    @PrePersist
+    public void saveDefaultPass() {
+       if (password == null) {
+           password = "123456";
+       }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
