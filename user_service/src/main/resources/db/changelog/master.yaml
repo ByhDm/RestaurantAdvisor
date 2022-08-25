@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: dmitriy.bykhov
+      changes:
+        - sqlFile:
+            path: \db\changelog\change_sets\users.sql
+  - changeSet:
+      id: 2
+      author: dmitriy.bykhov
+      changes:
+        - sqlFile:
+            path: \db\changelog\change_sets\roles.sql
+  - changeSet:
+      id: 3
+      author: dmitriy.bykhov
+      changes:
+        - sqlFile:
+            path: \db\changelog\change_sets\links_users_roles.sql
+  - changeSet:
+      id: 4
+      author: dmitriy.bykhov
+      changes:
+        - sqlFile:
+            path: \db\changelog\change_sets\add_user_pass.sql
