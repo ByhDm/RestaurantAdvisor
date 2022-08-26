@@ -21,9 +21,6 @@ public class MyUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> list = new ArrayList<>();
         list.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-       /* for (RolesEntity role : user.getRoles()) {
-            list.add(new SimpleGrantedAuthority(role.getName()));
-        }*/
         return list;
     }
 

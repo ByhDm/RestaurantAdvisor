@@ -21,4 +21,3 @@ public class UserServiceApplication {
         return new PasswordEncoderTest();
     }
 }
-
