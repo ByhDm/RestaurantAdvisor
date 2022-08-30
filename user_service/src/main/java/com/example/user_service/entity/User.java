@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -18,27 +19,41 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name")
+    @Basic
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "surname")
+    @Basic
+    @Column(name = "surname", nullable = false)
     private String surname;
 
-    @Column(name = "lastname")
+    @Basic
+    @Column(name = "lastname", nullable = false)
     private String lastname;
 
-    @Column(name = "email")
+    @Basic
+    @Column(name = "email", nullable = false)
     private String email;
 
+    @Basic
     @Column(name = "registration_date")
     @CreationTimestamp
     private LocalDateTime registrationDate;
 
-    @Column(name = "password")
+    @Basic
+    @Column(name = "password", nullable = false)
     private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "Links_users_roles",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")}
+    )
+    private Collection<Roles> roles;
 
     @PrePersist
     public void saveDefaultPass() {
@@ -51,12 +66,12 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
+        User that = (User) o;
+        return Objects.equals(this.email, that.email);
     }
 
     @Override
     public int hashCode() {
-        return 100;
+        return 31 + (email != null ? email.hashCode() : 0);
     }
 }
