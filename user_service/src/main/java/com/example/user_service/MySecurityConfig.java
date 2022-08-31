@@ -15,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class MySecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
-
+// test push
 //        return new BCryptPasswordEncoder(10);
         return NoOpPasswordEncoder.getInstance();
     }
