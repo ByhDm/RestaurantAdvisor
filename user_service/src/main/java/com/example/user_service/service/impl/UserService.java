@@ -68,10 +68,10 @@ public class UserService implements UserServiceI {
     @Override
     @Transactional
     public void changePassword(ChangePasswordUserInDTO changePasswordUserInDTO) {
-        User byEmail = userRepository.findByEmail(changePasswordUserInDTO.getEmail());
-        if (!byEmail.getPassword().equals(changePasswordUserInDTO.getOldPassword())) {
+        Optional<User> byEmail = userRepository.findByEmail(changePasswordUserInDTO.getEmail());
+        if (!byEmail.get().getPassword().equals(changePasswordUserInDTO.getOldPassword())) {
             throw new RuntimeException();
         }
-        byEmail.setPassword(changePasswordUserInDTO.getNewPassword());
+        byEmail.get().setPassword(changePasswordUserInDTO.getNewPassword());
     }
 }

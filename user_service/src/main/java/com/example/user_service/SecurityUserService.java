@@ -18,10 +18,10 @@ public class SecurityUserService implements UserDetailsService {
     }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User byEmail = usersRepository.findByEmail(username);
-/*        if(byEmail.isEmpty()) {
-            throw new UsernameNotFoundException(username);
-        }*/
-        return new MyUserDetails(byEmail/*.get()*/);
+       Optional<User> byEmail = usersRepository.findByEmail(username);
+       if (byEmail.isEmpty()) {
+           throw new UsernameNotFoundException(username);
+       }
+        return new MyUserDetails(byEmail.get());
     }
 }
