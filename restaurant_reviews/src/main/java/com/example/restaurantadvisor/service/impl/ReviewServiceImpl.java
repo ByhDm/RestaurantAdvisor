@@ -7,7 +7,6 @@ import com.example.restaurantadvisor.repository.RestaurantRepository;
 import com.example.restaurantadvisor.repository.ReviewRepository;
 import com.example.restaurantadvisor.service.ReviewService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -24,18 +23,6 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    @Transactional
-    public List<String> getReviewsRestaurantByName(String name) {
-        return reviewRepository.getReviewByName(name);
-    }
-
-    @Override
-    public Double getRatingRestaurantByName(String name) {
-
-        return reviewRepository.getRatingByName(name);
-    }
-
-    @Override
     public void addReview(Long restaurantId, String text, Integer rating) throws RestaurantNotFoundException {
         Optional<Restaurant> byId = restaurantRepository.findById(restaurantId);
         if(byId.isEmpty()) {
@@ -47,8 +34,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void updateReviewById(Long restaurant_id, String review) {
-        Optional<Review> reviewById = reviewRepository.findById(restaurant_id);
+    public void updateReviewById(Long id, String review) {
+        Optional<Review> reviewById = reviewRepository.findById(id);
         if (reviewById.isPresent()) {
             reviewById.get().setReview(review);
             reviewRepository.save(reviewById.get());

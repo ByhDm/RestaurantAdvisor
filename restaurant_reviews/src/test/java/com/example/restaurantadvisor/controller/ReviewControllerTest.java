@@ -32,21 +32,20 @@ public class ReviewControllerTest extends RestaurantServiceTest {
     private ObjectMapper objectMapper;
 
 
-    @Test
-    void getReviewsRestaurantByName() throws Exception {
-//        String expected = objectMapper.writeValueAsString(reviewService.getReviewsRestaurantByName("Astoria"));
-        this.mockMvc.perform(get("/review/{name}", "Astoria"))
-                .andDo(print())
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    void getReviewsRestaurantByName() throws Exception {
+//        this.mockMvc.perform(get("/review/{name}", "Astoria"))
+//                .andDo(print())
+//                .andExpect(status().isOk());
+//    }
 
-    @Test
-    void getRatingRestaurantByName() throws Exception {
-       Double ratingRestaurantById = reviewService.getRatingRestaurantByName("Astoria");
-        this.mockMvc.perform(get("/review/rating/{name}", "Astoria"))
-                .andDo(print())
-                .andExpect(content().string(Double.toString(ratingRestaurantById)));
-    }
+//    @Test
+//    void getRatingRestaurantByName() throws Exception {
+//       Double ratingRestaurantById = reviewService.getRatingRestaurantByName("Astoria");
+//        this.mockMvc.perform(get("/review/rating/{name}", "Astoria"))
+//                .andDo(print())
+//                .andExpect(content().string(Double.toString(ratingRestaurantById)));
+//    }
 
     @Test
     void addReview() throws Exception {
@@ -56,7 +55,7 @@ public class ReviewControllerTest extends RestaurantServiceTest {
                 .rating(1)
                 .build();
         String obj = objectMapper.writeValueAsString(review);
-        this.mockMvc.perform(post("/review/add")
+        this.mockMvc.perform(post("/review")
                         .contentType(MediaType.APPLICATION_JSON).content(obj))
                 .andExpect(status().isOk());
     }

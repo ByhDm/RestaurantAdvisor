@@ -4,13 +4,9 @@ import com.example.restaurantadvisor.dto.in.ReviewInDTO;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.example.restaurantadvisor.mapper.ReviewMapper;
 import com.example.restaurantadvisor.service.ReviewService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/review")
@@ -25,26 +21,15 @@ public class ReviewController {
         this.reviewMapper = reviewMapper;
     }
 
-    @GetMapping("/{name}")
-    public Page<String> getReviewsRestaurantByName(@PathVariable String name, Pageable pageable){
-        List<String> reviewsRestaurantById = reviewService.getReviewsRestaurantByName(name);
-        return new PageImpl<>(reviewsRestaurantById, pageable, reviewsRestaurantById.size());
-    }
-
-    @GetMapping("/rating/{name}")
-    public Double getRatingRestaurantByName(@PathVariable String name) {
-        return reviewService.getRatingRestaurantByName(name);
-    }
-
-    @PostMapping("/add")
+    @PostMapping
     public Long addReview(@RequestBody @Valid ReviewInDTO reviewInDTO) throws RestaurantNotFoundException {
         reviewService.addReview(reviewInDTO.getRestaurant_id(), reviewInDTO.getReview(), reviewInDTO.getRating());
         return reviewInDTO.getRestaurant_id();
     }
 
-    @PutMapping("/update/{restaurant_id}/{review}")
-    public void updateReviewById(@PathVariable Long restaurant_id, @PathVariable String review) {
-        reviewService.updateReviewById(restaurant_id, review);
+    @PutMapping("/{id}")
+    public void updateReviewById(@PathVariable Long id, @RequestParam String review) {
+        reviewService.updateReviewById(id, review);
     }
 
     @DeleteMapping("/{id}")

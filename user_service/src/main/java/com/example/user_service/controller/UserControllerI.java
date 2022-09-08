@@ -13,21 +13,22 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+@RequestMapping("/user")
 public interface UserControllerI {
 
-    @PostMapping("/create")
+    @PostMapping
     UserOutDTO createUser(@RequestBody UserInDTO userInDTO);
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     UserOutDTO updateUser(UserInDTO userInDTO, @PathVariable Long id) throws UserNotFoundException;
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     Long deleteUser(@PathVariable Long id) throws UserNotFoundException;
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     UserOutDTO getUser(@PathVariable Long id) throws UserNotFoundException;
 
-    @PutMapping("/new_password")
+    @PutMapping("/password")
     void changePassword(@RequestBody @Valid ChangePasswordUserInDTO changePasswordUserInDTO);
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

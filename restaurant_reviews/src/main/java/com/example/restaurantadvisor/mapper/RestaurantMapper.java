@@ -1,8 +1,10 @@
 package com.example.restaurantadvisor.mapper;
 
+import com.example.restaurantadvisor.controller.RestaurantSmallOutDTO;
 import com.example.restaurantadvisor.dto.in.RestaurantInDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
+import com.example.restaurantadvisor.repository.data.RestaurantSmall;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -20,4 +22,6 @@ public interface RestaurantMapper {
 
     @Mapping(target = "id", ignore = true)
     List<RestaurantOutDTO> restaurantsToRestaurantsOutDTO(List<Restaurant> restaurants);
+
+    List<RestaurantSmallOutDTO> restaurantsToRestaurantSmallOutDTO(List<RestaurantSmall> restaurants);
 }

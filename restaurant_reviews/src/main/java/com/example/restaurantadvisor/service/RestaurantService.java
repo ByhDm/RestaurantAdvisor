@@ -1,5 +1,6 @@
 package com.example.restaurantadvisor.service;
 
+import com.example.restaurantadvisor.controller.RestaurantSmallOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.FoundationDateIsExpiredException;
 import com.example.restaurantadvisor.exception.IncorrectEmailAddressException;
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RestaurantService {
-
     Page<Restaurant> getAllRestaurants(Pageable pageable);
     Restaurant addRestaurant(Restaurant restaurant) throws NumberParseException;
     Restaurant getRestaurantByName(String name) throws RestaurantNotFoundException;
@@ -23,4 +23,8 @@ public interface RestaurantService {
     void addEmailAddressByName(String name, String emailAddress) throws FoundationDateIsExpiredException, RestaurantNotFoundException, IncorrectEmailAddressException;
     Restaurant addRestaurantByNameAndCreationDate(String name, LocalDate creationDate) throws FoundationDateIsExpiredException, NumberParseException;
     LocalDate getCreationDateByRestaurantId(Long id) throws RestaurantNotFoundException;
+    List<String> getReviewsRestaurantByName(String name);
+    Double getRatingRestaurantByName(String name);
+
+    List<RestaurantSmallOutDTO> getSmallList();
 }

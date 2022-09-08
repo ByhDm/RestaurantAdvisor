@@ -59,15 +59,23 @@ public class RestaurantControllerTest extends RestaurantServiceTest {
                 .date(LocalDate.of(2015, 1, 13))
                 .build();
         String obj = objectMapper.writeValueAsString(restaurant);
-        this.mockMvc.perform(post("/restaurant/add")
+        this.mockMvc.perform(post("/restaurant")
                         .contentType(MediaType.APPLICATION_JSON).content(obj))
                 .andExpect(status().isOk());
     }
 
     @Test
     void updateDescription() throws Exception {
-        this.mockMvc.perform(put("/restaurant/update/{name}/{description}", "Astoria", "description"))
-                .andDo(print())
+        RestaurantInDTO restaurant = RestaurantInDTO.builder()
+                .name("Astoria")
+                .phoneNumber("+79990000000")
+                .email("astoria@astoria.com")
+                .description("description")
+                .date(LocalDate.of(2015, 1, 13))
+                .build();
+        String obj = objectMapper.writeValueAsString(restaurant);
+        this.mockMvc.perform(post("/restaurant")
+                        .contentType(MediaType.APPLICATION_JSON).content(obj))
                 .andExpect(status().isOk());
     }
 
@@ -87,5 +95,20 @@ public class RestaurantControllerTest extends RestaurantServiceTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(expected));
+    }
+
+    @Test
+    void getReviewsRestaurantByName() throws Exception {
+        this.mockMvc.perform(get("/restaurant/{name}/reviews", "Astoria"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getRatingRestaurantByName() throws Exception {
+        Double ratingRestaurantById = restaurantService.getRatingRestaurantByName("Astoria");
+        this.mockMvc.perform(get("/restaurant/rating/{name}", "Astoria"))
+                .andDo(print())
+                .andExpect(content().string(Double.toString(ratingRestaurantById)));
     }
 }

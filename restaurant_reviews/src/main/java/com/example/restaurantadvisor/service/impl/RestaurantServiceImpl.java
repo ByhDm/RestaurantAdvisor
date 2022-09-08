@@ -1,18 +1,22 @@
 package com.example.restaurantadvisor.service.impl;
 
+import com.example.restaurantadvisor.controller.RestaurantSmallOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.FoundationDateIsExpiredException;
 import com.example.restaurantadvisor.exception.IncorrectEmailAddressException;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
+import com.example.restaurantadvisor.mapper.RestaurantMapper;
 import com.example.restaurantadvisor.repository.RestaurantRepository;
+import com.example.restaurantadvisor.repository.ReviewRepository;
+import com.example.restaurantadvisor.repository.data.RestaurantSmall;
 import com.example.restaurantadvisor.service.RestaurantService;
 import com.example.restaurantadvisor.util.EmailUtil;
 import com.example.restaurantadvisor.util.PhoneUtil;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,9 +26,14 @@ import java.util.Optional;
 public class RestaurantServiceImpl implements RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+    private final ReviewRepository reviewRepository;
 
-    public RestaurantServiceImpl(RestaurantRepository restaurantRepository) {
+    private final RestaurantMapper restaurantMapper;
+
+    public RestaurantServiceImpl(RestaurantRepository restaurantRepository, ReviewRepository reviewRepository, RestaurantMapper restaurantMapper) {
         this.restaurantRepository = restaurantRepository;
+        this.reviewRepository = reviewRepository;
+        this.restaurantMapper = restaurantMapper;
     }
 
     @Override
@@ -137,5 +146,23 @@ public class RestaurantServiceImpl implements RestaurantService {
             Restaurant restaurantById = byId.get();
             return restaurantById.getDate();
         }
+    }
+
+    @Override
+    @Transactional
+    public List<String> getReviewsRestaurantByName(String name) {
+        return reviewRepository.getReviewByName(name);
+    }
+
+    @Override
+    public Double getRatingRestaurantByName(String name) {
+
+        return reviewRepository.getRatingByName(name);
+    }
+
+    @Override
+    public List<RestaurantSmallOutDTO> getSmallList() {
+        List<RestaurantSmall> smallRestaurants = restaurantRepository.findSmallRestaurants();
+        return restaurantMapper.restaurantsToRestaurantSmallOutDTO(smallRestaurants);
     }
 }
