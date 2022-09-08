@@ -1,5 +1,6 @@
 package com.example.restaurantadvisor.controller;
 
+import com.example.restaurantadvisor.dto.in.RestaurantInDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
@@ -38,8 +39,9 @@ public class RestaurantController {
     }
 
     @PostMapping("/add")
-    public void addRestaurant(@RequestBody @Valid Restaurant restaurant) throws NumberParseException {
-        restaurantService.addRestaurant(restaurant);
+    public RestaurantInDTO addRestaurant(@RequestBody @Valid RestaurantInDTO restaurantInDTO) throws NumberParseException {
+        restaurantService.addRestaurant(restaurantMapper.restaurantInDTOToRestaurant(restaurantInDTO));
+        return restaurantInDTO;
     }
 
     @GetMapping("/name/{name}")
@@ -56,7 +58,7 @@ public class RestaurantController {
     @GetMapping("/description/{name}")
     public String getDescriptionRestaurantByName(@PathVariable String name) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantService.getRestaurantByName(name);
-        return restaurantMapper.restaurantToRestaurantOutDTO(restaurant).getDescription();
+        return restaurant.getDescription();
     }
 
     @GetMapping("/id/{id}")

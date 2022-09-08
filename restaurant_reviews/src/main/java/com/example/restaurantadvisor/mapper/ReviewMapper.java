@@ -6,9 +6,11 @@ import org.mapstruct.Mapper;
 
 import java.util.List;
 
+
 @Mapper(componentModel = "spring")
 public interface ReviewMapper {
-    ReviewOutDTO reviewToReviewOutDTO(Review review);
-    List<String> reviewsToReviewsOutDTO(List<String> reviews);
 
+    ReviewOutDTO reviewToReviewOutDTO(Review review);
+
+    List<String> reviewsToReviewsOutDTO(List<String> reviews);
 }

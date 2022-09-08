@@ -7,16 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 public interface ReviewService {
-//    List<String> getReviewsRestaurantById(Long id) throws RestaurantNotFoundException;
-//    Map<String, Integer> getRatingRestaurantById(Long id);
-//    void addReview(Review review);
-//    void updateReviewById(Long restaurant_id, String review);
-
     List<String> getReviewsRestaurantByName(String name);
 
     Double getRatingRestaurantByName(String name);
 
-    Review addReview(Review review);
+    void addReview(Long restaurantId, String text, Integer rating) throws RestaurantNotFoundException;
 
     void updateReviewById(Long restaurant_id, String review);
+
+    void deleteReviewById(Long id);
 }

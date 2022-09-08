@@ -4,9 +4,6 @@ import com.example.user_service.dto.in.ChangePasswordUserInDTO;
 import com.example.user_service.dto.in.UserInDTO;
 import com.example.user_service.dto.out.UserOutDTO;
 import com.example.user_service.exceptions.UserNotFoundException;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.validation.Valid;
 
 public interface UserServiceI {
 

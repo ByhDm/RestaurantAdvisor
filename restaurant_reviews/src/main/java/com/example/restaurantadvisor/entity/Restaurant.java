@@ -22,6 +22,10 @@ public class Restaurant {
     private Long id;
 
     @Basic
+    @Column(name = "id_Boss")
+    private Long idBoss;
+
+    @Basic
     @Column(name = "name")
     private String name;
 

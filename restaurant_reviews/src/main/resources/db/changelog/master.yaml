@@ -11,3 +11,9 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: \db\changelog\change_sets\tables\reviews.sql
+  - changeSet:
+      id: 3
+      author: dmitriy.bykhov
+      changes:
+        - sqlFile:
+            path: \db\changelog\change_sets\tables\add_id_boss.sql

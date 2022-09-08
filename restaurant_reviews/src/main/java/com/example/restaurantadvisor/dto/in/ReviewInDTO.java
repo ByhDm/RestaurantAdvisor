@@ -1,11 +1,11 @@
 package com.example.restaurantadvisor.dto.in;
 
-import com.example.restaurantadvisor.entity.Restaurant;
 import lombok.*;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -14,8 +14,8 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class ReviewInDTO {
 
-    @NotBlank(message = "You can't create review with empty reference id field")
-    private Restaurant restaurant_id;
+    @NotNull(message = "You can't create review with null reference id field")
+    private Long restaurant_id;
 
     @NotBlank(message = "Empty review")
     private String review;

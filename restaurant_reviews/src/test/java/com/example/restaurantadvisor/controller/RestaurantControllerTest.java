@@ -1,19 +1,18 @@
 package com.example.restaurantadvisor.controller;
 
+import com.example.restaurantadvisor.dto.in.RestaurantInDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantOutDTO;
 import com.example.restaurantadvisor.service.RestaurantService;
 import com.example.restaurantadvisor.service.RestaurantServiceTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -32,15 +31,13 @@ public class RestaurantControllerTest extends RestaurantServiceTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @Transactional
     @Test
     void getAllRestaurants() throws Exception {
-        String expected = objectMapper.writeValueAsString(restaurantService.getAllRestaurants(Pageable.unpaged()));
+        objectMapper.registerModule(new JavaTimeModule());
         this.mockMvc.perform(get("/restaurant/all"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(expected));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -54,12 +51,12 @@ public class RestaurantControllerTest extends RestaurantServiceTest {
 
     @Test
     void addRestaurants() throws Exception {
-        RestaurantOutDTO restaurant = RestaurantOutDTO.builder()
-                .name("TEST")
-                .phoneNumber("+79992222222")
-                .email("test@test.com")
-                .description("test")
-                .date(LocalDate.of(2011, 1, 11))
+        RestaurantInDTO restaurant = RestaurantInDTO.builder()
+                .name("Astoria")
+                .phoneNumber("+79990000000")
+                .email("astoria@astoria.com")
+                .description("Test description 1")
+                .date(LocalDate.of(2015, 1, 13))
                 .build();
         String obj = objectMapper.writeValueAsString(restaurant);
         this.mockMvc.perform(post("/restaurant/add")
