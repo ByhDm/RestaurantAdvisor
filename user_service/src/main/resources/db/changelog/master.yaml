@@ -17,3 +17,9 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: \db\changelog\change_sets\links_users_roles.sql
+  - changeSet:
+      id: 4
+      author: dmitriy.bykhov
+      changes:
+        - sqlFile:
+            path: \db\changelog\change_sets\add_password_to_user.sql

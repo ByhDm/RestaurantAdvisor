@@ -1,12 +1,15 @@
 package com.example.restaurantadvisor.controller;
 
-import com.example.restaurantadvisor.entity.Review;
+import com.example.restaurantadvisor.dto.in.ReviewInDTO;
+import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.example.restaurantadvisor.mapper.ReviewMapper;
 import com.example.restaurantadvisor.service.ReviewService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/review")
@@ -21,24 +24,40 @@ public class ReviewController {
         this.reviewMapper = reviewMapper;
     }
 
-    @GetMapping("/{name}")
-    public List<String> getReviewsRestaurantByName(@PathVariable String name){
-        List<String> reviewsRestaurantById = reviewService.getReviewsRestaurantByName(name);
-        return reviewMapper.reviewsToReviewsOutDTO(reviewsRestaurantById);
+    @Operation(summary = "Add review")
+    @PostMapping
+    public Long addReview(@RequestBody @Valid ReviewInDTO reviewInDTO) throws RestaurantNotFoundException {
+        reviewService.addReview(reviewInDTO.getRestaurantId(), reviewInDTO.getReview(), reviewInDTO.getRating());
+        return reviewInDTO.getRestaurantId();
     }
 
-    @GetMapping("/rating/{name}")
-    Double getRatingRestaurantByName(@PathVariable String name) {
-        return reviewService.getRatingRestaurantByName(name);
+    @Operation(summary = "Update review by id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "review is update"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "review is not found"
+            )
+    })
+    @PutMapping("/{id}")
+    public void updateReviewById(@PathVariable Long id, @RequestParam String review) {
+        reviewService.updateReviewById(id, review);
     }
 
-    @PostMapping("/add")
-    public void addReview(@RequestBody @Valid Review review) {
-        reviewService.addReview(review);
-    }
-
-    @PutMapping("/update/{restaurant_id}/{review}")
-    void updateReviewById(@PathVariable Long restaurant_id, @PathVariable String review) {
-        reviewService.updateReviewById(restaurant_id, review);
+    @Operation(summary = "Delete review by id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "review is delete"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "review is not found"
+            )
+    })
+    @DeleteMapping("/{id}")
+    public void deleteReviewById(@PathVariable Long id) {
+        reviewService.deleteReviewById(id);
     }
 }

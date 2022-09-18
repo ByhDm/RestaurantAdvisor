@@ -11,6 +11,7 @@ import com.example.user_service.service.UserServiceI;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -67,11 +68,15 @@ public class UserService implements UserServiceI {
 
     @Override
     @Transactional
-    public void changePassword(ChangePasswordUserInDTO changePasswordUserInDTO) {
-        Optional<User> byEmail = userRepository.findByEmail(changePasswordUserInDTO.getEmail());
-        if (!byEmail.get().getPassword().equals(changePasswordUserInDTO.getOldPassword())) {
-            throw new RuntimeException();
+    public void changePassword(ChangePasswordUserInDTO changePasswordUserInDTO, String email) throws UserNotFoundException {
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        if (byEmail.isPresent()) {
+            throw new UserNotFoundException();
         }
-        byEmail.get().setPassword(changePasswordUserInDTO.getNewPassword());
+        User user = byEmail.get();
+        if(!Objects.equals(changePasswordUserInDTO.getOldPassword(), user.getPassword())){
+            throw new UserNotFoundException();
+        }
+        user.setPassword(changePasswordUserInDTO.getNewPassword());
     }
 }

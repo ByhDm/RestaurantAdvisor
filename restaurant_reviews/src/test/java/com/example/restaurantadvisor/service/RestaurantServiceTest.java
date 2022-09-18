@@ -2,14 +2,15 @@ package com.example.restaurantadvisor.service;
 
 import com.example.restaurantadvisor.RestaurantAdvisorApplicationTests;
 import com.example.restaurantadvisor.entity.Restaurant;
-import com.example.restaurantadvisor.entity.Review;
 import com.example.restaurantadvisor.exception.FoundationDateIsExpiredException;
 import com.example.restaurantadvisor.exception.IncorrectEmailAddressException;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,33 +27,38 @@ public class RestaurantServiceTest extends RestaurantAdvisorApplicationTests {
     private ReviewService reviewService;
 
     @BeforeAll
-    void addRestaurantsAndReviewsInDataBase() throws NumberParseException {
+    void addRestaurantsAndReviewsInDataBase() throws NumberParseException, RestaurantNotFoundException {
         Restaurant restaurant = new Restaurant();
         restaurant.setName("Astoria");
         restaurant.setEmail("astoria@astoria.com");
         restaurant.setDescription("Test description 1");
         restaurant.setDate(LocalDate.of(2015, 1,13));
         restaurantService.addRestaurant(restaurant);
-        Review review = new Review();
-        review.setReview("Good restaurant");
-        review.setRestaurant_id(restaurantService.getAllRestaurants(Pageable.unpaged()).toList().get(0));
-        review.setRating(4);
-        reviewService.addReview(review);
+        reviewService.addReview(restaurantService.getAllRestaurants(Pageable.unpaged()).toList().get(0).getId(), "Good restaurant", 1);
+        Restaurant restaurant2 = new Restaurant();
+        restaurant2.setName("Asia");
+        restaurant2.setEmail("asia@asia.com");
+        restaurant2.setDescription("Test description 2");
+        restaurant2.setDate(LocalDate.of(2015, 10,13));
+        restaurantService.addRestaurant(restaurant2);
     }
 
     @BeforeEach
     void setDefaultParameters() throws RestaurantNotFoundException {
         restaurantService.addPhoneByRestaurantName("Astoria", "+79990000000");
+        restaurantService.addPhoneByRestaurantName("Asia", "+79991111111");
     }
 
     @Test
     void getAll() {
-        List<Restaurant> allRestaurants = restaurantService.getAllRestaurants(Pageable.unpaged()).toList();
+        Pageable pageable = PageRequest.of(0,10, Sort.by(Sort.Order.by("name")));
+        List<Restaurant> allRestaurants = restaurantService.getAllRestaurants(pageable).toList();
         assertNotNull(allRestaurants);
-        assertEquals("Astoria", allRestaurants.get(0).getName());
-        assertEquals("+79990000000", allRestaurants.get(0).getPhoneNumber());
-        assertEquals("astoria@astoria.com", allRestaurants.get(0).getEmail());
-        assertEquals("Test description 1", allRestaurants.get(0).getDescription());
+        assertEquals("Asia", allRestaurants.get(0).getName());
+        assertEquals("+79991111111", allRestaurants.get(0).getPhoneNumber());
+        assertEquals("asia@asia.com", allRestaurants.get(0).getEmail());
+        assertEquals("Test description 2", allRestaurants.get(0).getDescription());
+        assertEquals(LocalDate.of(2015, 10,13), allRestaurants.get(0).getDate());
     }
 
     @Test
@@ -71,8 +77,8 @@ public class RestaurantServiceTest extends RestaurantAdvisorApplicationTests {
 
     @Test
     void getDescriptionRestaurantByName() throws RestaurantNotFoundException {
-        String name = "Astoria";
-        String description = "Test description 1";
+        String name = "Asia";
+        String description = "Test description 2";
         String descriptionRestaurantByName = restaurantService.getDescriptionRestaurantByName(name);
         assertEquals(description, descriptionRestaurantByName);
     }

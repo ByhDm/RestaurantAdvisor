@@ -49,11 +49,11 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "Links_users_roles",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id")}
+            name = "links_users_roles",
+            joinColumns = {@JoinColumn(name = "id_user")},
+            inverseJoinColumns = {@JoinColumn(name = "id_roles")}
     )
-    private Collection<Roles> roles;
+    private Collection<Role> roles;
 
     @PrePersist
     public void saveDefaultPass() {

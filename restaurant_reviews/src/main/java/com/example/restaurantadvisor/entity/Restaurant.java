@@ -1,9 +1,12 @@
 package com.example.restaurantadvisor.entity;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -20,6 +23,10 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
+    @Basic
+    @Column(name = "id_Boss")
+    private Long idBoss;
 
     @Basic
     @Column(name = "name")
@@ -40,6 +47,10 @@ public class Restaurant {
     @Basic
     @Column(name = "creation_date")
     private LocalDate date;
+
+    @Column(name = "update_datetime")
+    @UpdateTimestamp
+    private LocalDateTime updatedDateTime;
 
     @OneToMany(mappedBy = "restaurant_id"
             , cascade = CascadeType.PERSIST
