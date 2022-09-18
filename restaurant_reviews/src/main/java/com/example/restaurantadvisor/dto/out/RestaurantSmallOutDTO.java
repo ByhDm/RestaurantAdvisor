@@ -1,4 +1,4 @@
-package com.example.restaurantadvisor.controller;
+package com.example.restaurantadvisor.dto.out;
 
 import lombok.Data;
 

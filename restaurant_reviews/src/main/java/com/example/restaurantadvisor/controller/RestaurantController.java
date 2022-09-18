@@ -2,6 +2,7 @@ package com.example.restaurantadvisor.controller;
 
 import com.example.restaurantadvisor.dto.in.RestaurantInDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantOutDTO;
+import com.example.restaurantadvisor.dto.out.RestaurantSmallOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.example.restaurantadvisor.mapper.RestaurantMapper;

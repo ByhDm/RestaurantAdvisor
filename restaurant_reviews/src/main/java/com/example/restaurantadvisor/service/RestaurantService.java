@@ -1,6 +1,6 @@
 package com.example.restaurantadvisor.service;
 
-import com.example.restaurantadvisor.controller.RestaurantSmallOutDTO;
+import com.example.restaurantadvisor.dto.out.RestaurantSmallOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.FoundationDateIsExpiredException;
 import com.example.restaurantadvisor.exception.IncorrectEmailAddressException;

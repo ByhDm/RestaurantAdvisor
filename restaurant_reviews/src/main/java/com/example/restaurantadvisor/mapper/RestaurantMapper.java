@@ -1,6 +1,6 @@
 package com.example.restaurantadvisor.mapper;
 
-import com.example.restaurantadvisor.controller.RestaurantSmallOutDTO;
+import com.example.restaurantadvisor.dto.out.RestaurantSmallOutDTO;
 import com.example.restaurantadvisor.dto.in.RestaurantInDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
@@ -18,6 +18,7 @@ public interface RestaurantMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "idBoss", ignore = true)
     @Mapping(target = "reviews", ignore = true)
+    @Mapping(target = "updatedDateTime", ignore = true)
     Restaurant restaurantInDTOToRestaurant(RestaurantInDTO restaurantInDTO);
 
     @Mapping(target = "id", ignore = true)

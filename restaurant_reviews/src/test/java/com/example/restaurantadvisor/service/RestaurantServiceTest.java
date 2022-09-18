@@ -51,7 +51,6 @@ public class RestaurantServiceTest extends RestaurantAdvisorApplicationTests {
 
     @Test
     void getAll() {
-
         Pageable pageable = PageRequest.of(0,10, Sort.by(Sort.Order.by("name")));
         List<Restaurant> allRestaurants = restaurantService.getAllRestaurants(pageable).toList();
         assertNotNull(allRestaurants);
