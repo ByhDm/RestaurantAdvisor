@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UserDeleteIdDTO {
+public class DeletedOwnerOutDTO {
     private Long idBoss;
 }

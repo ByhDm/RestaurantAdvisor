@@ -26,7 +26,7 @@ public class ReviewServiceImpl implements ReviewService {
     public void addReview(Long restaurantId, String text, Integer rating) throws RestaurantNotFoundException {
         Optional<Restaurant> byId = restaurantRepository.findById(restaurantId);
         if(byId.isEmpty()) {
-            throw new RestaurantNotFoundException();
+            throw new RestaurantNotFoundException(restaurantId);
         }
         Restaurant restaurant = byId.get();
         Review review = new Review(restaurant, text, rating);

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     Restaurant findFirstByName(String name);
@@ -14,4 +15,9 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
             "join reviews AS rev on (res.id=rev.restaurant_id) " +
             "group by res.id", nativeQuery = true)
     List<RestaurantSmall> findSmallRestaurants();
+
+    Optional<List<Restaurant>> findAllByIdBoss(Long idBoss);
+    boolean existsRestaurantByIdBoss(Long idBoss);
+    void deleteAllByIdBoss(Long idBoss);
+    void deleteByIdBoss(Long idBoss);
 }

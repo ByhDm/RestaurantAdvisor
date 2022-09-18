@@ -27,7 +27,7 @@ public class ReviewControllerTest extends RestaurantServiceTest {
     @Test
     void addReview() throws Exception {
         ReviewInDTO review = ReviewInDTO.builder()
-                .restaurant_id(restaurantService.getRestaurantByName("Astoria").getId())
+                .restaurantId(restaurantService.getRestaurantByName("Astoria").getId())
                 .review("Test review 1")
                 .rating(1)
                 .build();

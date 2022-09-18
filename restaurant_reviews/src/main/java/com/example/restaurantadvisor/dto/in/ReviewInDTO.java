@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public class ReviewInDTO {
 
     @NotNull(message = "You can't create review with null reference id field")
-    private Long restaurant_id;
+    private Long restaurantId;
 
     @NotBlank(message = "Empty review")
     private String review;

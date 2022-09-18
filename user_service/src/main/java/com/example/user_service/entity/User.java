@@ -53,7 +53,7 @@ public class User {
             joinColumns = {@JoinColumn(name = "id_user")},
             inverseJoinColumns = {@JoinColumn(name = "id_roles")}
     )
-    private Collection<Roles> roles;
+    private Collection<Role> roles;
 
     @PrePersist
     public void saveDefaultPass() {

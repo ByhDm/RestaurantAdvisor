@@ -1,5 +1,8 @@
 package com.example.restaurantadvisor.controller;
 
+import com.example.restaurantadvisor.dto.in.AddOwnerInDTO;
+import com.example.restaurantadvisor.dto.in.ChangeOwnerInDTO;
+import com.example.restaurantadvisor.dto.in.DeleteOwnerInDTO;
 import com.example.restaurantadvisor.dto.in.RestaurantInDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantOutDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantSmallOutDTO;
@@ -8,6 +11,9 @@ import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.example.restaurantadvisor.mapper.RestaurantMapper;
 import com.example.restaurantadvisor.service.RestaurantService;
 import com.google.i18n.phonenumbers.NumberParseException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -35,55 +41,190 @@ public class RestaurantController {
         this.restaurantMapper = restaurantMapper;
     }
 
+    @Operation(summary = "Get all restaurants")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "ok"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "false"
+            )
+    })
     @GetMapping("/all")
     public Page<RestaurantOutDTO> getAllRestaurants(@PageableDefault(sort = "name") Pageable pageable) {
         Page<Restaurant> restaurants = restaurantService.getAllRestaurants(pageable);
         return restaurants.map(restaurantMapper::restaurantToRestaurantOutDTO);
     }
 
+    @Operation(summary = "Create restaurant")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "ok"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "false"
+            )
+    })
     @PostMapping
     public RestaurantInDTO addRestaurant(@RequestBody @Valid RestaurantInDTO restaurantInDTO) throws NumberParseException {
         restaurantService.addRestaurant(restaurantMapper.restaurantInDTOToRestaurant(restaurantInDTO));
         return restaurantInDTO;
     }
 
+    @Operation(summary = "Get restaurant by name")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "ok"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "false"
+            )
+    })
     @GetMapping("/name/{name}")
     public RestaurantOutDTO getRestaurantByName(@PathVariable String name) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantService.getRestaurantByName(name);
         return restaurantMapper.restaurantToRestaurantOutDTO(restaurant);
     }
 
+    @Operation(summary = "Update description restaurant by name")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "ok"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "false"
+            )
+    })
     @PutMapping
     public void updateDescriptionRestaurantByName(@RequestParam String name, @RequestParam String description) throws RestaurantNotFoundException {
         restaurantService.updateDescriptionRestaurantByName(name, description);
     }
 
+    @Operation(summary = "Get description restaurant by name")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "ok"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "false"
+            )
+    })
     @GetMapping("/description/{name}")
     public String getDescriptionRestaurantByName(@PathVariable String name) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantService.getRestaurantByName(name);
         return restaurant.getDescription();
     }
 
+    @Operation(summary = "Get restaurant by id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "ok"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "false"
+            )
+    })
     @GetMapping("/{id}")
     public RestaurantOutDTO getRestaurantById(@PathVariable Long id) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantService.getRestaurantById(id);
         return restaurantMapper.restaurantToRestaurantOutDTO(restaurant);
     }
 
+    @Operation(summary = "Get reviews for restaurant by id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "ok"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "false"
+            )
+    })
     @GetMapping("/{name}/reviews")
     public Page<String> getReviewsRestaurantByName(@PathVariable String name, Pageable pageable){
         List<String> reviewsRestaurantById = restaurantService.getReviewsRestaurantByName(name);
         return new PageImpl<>(reviewsRestaurantById, pageable, reviewsRestaurantById.size());
     }
 
+    @Operation(summary = "Get rating for restaurant by name")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "ok"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "false"
+            )
+    })
     @GetMapping("/rating/{name}")
     public Double getRatingRestaurantByName(@PathVariable String name) {
         return restaurantService.getRatingRestaurantByName(name);
     }
 
+    @Operation(summary = "Get small List restaurants")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "ok"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "false"
+            )
+    })
     @GetMapping("/smallList")
     public List<RestaurantSmallOutDTO> getSmallListRestaurants() {
         return restaurantService.getSmallList();
+    }
+
+    @Operation(summary = "Delete owner")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Found the users"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            )
+    })
+    @DeleteMapping("/owner")
+    public void deleteOwner(@RequestBody DeleteOwnerInDTO deleteOwnerInDTO) throws RestaurantNotFoundException {
+        restaurantService.deleteOwner(deleteOwnerInDTO);
+    }
+
+    @Operation(summary = "Add owner")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Found the users"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            )
+    })
+    @PostMapping("/owner")
+    public void addOwner(@RequestBody AddOwnerInDTO addOwnerInDTO) throws RestaurantNotFoundException {
+        restaurantService.addOwner(addOwnerInDTO);
+    }
+
+    @Operation(summary = "Change owner")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Found the users"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found"
+            )
+    })
+    @PostMapping("/owner/change")
+    public void changeOwner(@RequestBody ChangeOwnerInDTO changeOwnerInDTO) throws RestaurantNotFoundException {
+        restaurantService.changeOwner(changeOwnerInDTO);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

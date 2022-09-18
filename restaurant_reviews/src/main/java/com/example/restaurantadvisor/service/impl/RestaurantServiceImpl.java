@@ -1,5 +1,8 @@
 package com.example.restaurantadvisor.service.impl;
 
+import com.example.restaurantadvisor.dto.in.AddOwnerInDTO;
+import com.example.restaurantadvisor.dto.in.ChangeOwnerInDTO;
+import com.example.restaurantadvisor.dto.in.DeleteOwnerInDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantSmallOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.FoundationDateIsExpiredException;
@@ -38,7 +41,6 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Page<Restaurant> getAllRestaurants(Pageable pageable) {
-
         return restaurantRepository.findAll(pageable);
     }
 
@@ -57,7 +59,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public Restaurant getRestaurantByName(String name) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
         if (restaurant == null) {
-            throw new RestaurantNotFoundException();
+            throw new RestaurantNotFoundException(restaurantRepository.findFirstByName(name).getId());
         } else {
             return restaurant;
         }
@@ -67,7 +69,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void updateDescriptionRestaurantByName(String name, String description) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
         if (restaurant == null) {
-            throw new RestaurantNotFoundException();
+            throw new RestaurantNotFoundException(restaurantRepository.findFirstByName(name).getId());
         } else {
             restaurant.setDescription(description);
             restaurantRepository.save(restaurant); //     @Transactional
@@ -78,7 +80,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public String getDescriptionRestaurantByName(String name) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
         if (restaurant == null) {
-            throw new RestaurantNotFoundException();
+            throw new RestaurantNotFoundException(restaurantRepository.findFirstByName(name).getId());
         } else {
             return restaurant.getDescription();
         }
@@ -88,7 +90,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public Restaurant getRestaurantById(Long id) throws RestaurantNotFoundException {
         Optional<Restaurant> byId = restaurantRepository.findById(id);
         if (byId.isEmpty()) {
-            throw new RestaurantNotFoundException();
+            throw new RestaurantNotFoundException(id);
         } else {
             return byId.get();
         }
@@ -98,7 +100,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void addPhoneByRestaurantName(String name, String phone) throws RestaurantNotFoundException {
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
         if (restaurant == null) {
-            throw new RestaurantNotFoundException();
+            throw new RestaurantNotFoundException(restaurantRepository.findFirstByName(name).getId());
         } else {
             try {
                 restaurant.setPhoneNumber(PhoneUtil.reformatRuTelephone(phone));
@@ -113,7 +115,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void addEmailAddressByName(String name, String emailAddress) throws RestaurantNotFoundException, IncorrectEmailAddressException {
         Restaurant restaurant = restaurantRepository.findFirstByName(name);
         if (restaurant == null) {
-            throw new RestaurantNotFoundException();
+            throw new RestaurantNotFoundException(restaurantRepository.findFirstByName(name).getId());
         } else {
             if (EmailUtil.checkValid(emailAddress)) {
                 restaurant.setEmail(emailAddress);
@@ -141,7 +143,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public LocalDate getCreationDateByRestaurantId(Long id) throws RestaurantNotFoundException {
         Optional<Restaurant> byId = restaurantRepository.findById(id);
         if (byId.isEmpty()) {
-            throw new RestaurantNotFoundException();
+            throw new RestaurantNotFoundException(id);
         } else {
             Restaurant restaurantById = byId.get();
             return restaurantById.getDate();
@@ -164,5 +166,52 @@ public class RestaurantServiceImpl implements RestaurantService {
     public List<RestaurantSmallOutDTO> getSmallList() {
         List<RestaurantSmall> smallRestaurants = restaurantRepository.findSmallRestaurants();
         return restaurantMapper.restaurantsToRestaurantSmallOutDTO(smallRestaurants);
+    }
+
+    @Override
+    @Transactional
+    public void deleteOwner(DeleteOwnerInDTO deleteOwnerInDTO) throws RestaurantNotFoundException {
+        Long idBoss = deleteOwnerInDTO.getIdBoss();
+        List<Restaurant> restaurants = getRestaurantByOwnerId(idBoss);
+        for (Restaurant restaurant : restaurants) {
+            Long id = restaurant.getId();
+            Optional<Restaurant> byId = restaurantRepository.findById(id);
+            if (byId.isEmpty()) {
+                throw new RestaurantNotFoundException(id);
+            }
+            byId.get().setIdBoss(null);
+        }
+    }
+
+    @Override
+    public List<Restaurant> getRestaurantByOwnerId(Long idBoss) throws RestaurantNotFoundException {
+        Optional<List<Restaurant>> byIdBoss = restaurantRepository.findAllByIdBoss(idBoss);
+        if (byIdBoss.isEmpty()) {
+            throw new RestaurantNotFoundException(idBoss);
+        }
+        return byIdBoss.get();
+    }
+
+    @Override
+    public void addOwner(AddOwnerInDTO addOwnerInDTO) throws RestaurantNotFoundException {
+        Optional<Restaurant> byId = restaurantRepository.findById(addOwnerInDTO.getRestaurantId());
+        if (byId.isEmpty()) {
+            throw new RestaurantNotFoundException(addOwnerInDTO.getRestaurantId());
+        }
+        byId.get().setIdBoss(addOwnerInDTO.getIdBoss());
+    }
+
+    @Override
+    public void changeOwner(ChangeOwnerInDTO changeOwnerInDTO) throws RestaurantNotFoundException {
+        Long idBoss = changeOwnerInDTO.getOldIdBoss();
+        List<Restaurant> restaurants = getRestaurantByOwnerId(idBoss);
+        for (Restaurant restaurant : restaurants) {
+            Long id = restaurant.getId();
+            Optional<Restaurant> byId = restaurantRepository.findById(id);
+            if (byId.isEmpty()) {
+                throw new RestaurantNotFoundException(id);
+            }
+            byId.get().setIdBoss(changeOwnerInDTO.getNewIdBoss());
+        }
     }
 }

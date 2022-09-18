@@ -1,5 +1,8 @@
 package com.example.restaurantadvisor.service;
 
+import com.example.restaurantadvisor.dto.in.AddOwnerInDTO;
+import com.example.restaurantadvisor.dto.in.ChangeOwnerInDTO;
+import com.example.restaurantadvisor.dto.in.DeleteOwnerInDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantSmallOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.FoundationDateIsExpiredException;
@@ -25,6 +28,9 @@ public interface RestaurantService {
     LocalDate getCreationDateByRestaurantId(Long id) throws RestaurantNotFoundException;
     List<String> getReviewsRestaurantByName(String name);
     Double getRatingRestaurantByName(String name);
-
     List<RestaurantSmallOutDTO> getSmallList();
+    void deleteOwner(DeleteOwnerInDTO deleteOwnerInDTO) throws RestaurantNotFoundException;
+    List<Restaurant> getRestaurantByOwnerId(Long idBoss) throws RestaurantNotFoundException;
+    void addOwner(AddOwnerInDTO addOwnerInDTO) throws RestaurantNotFoundException;
+    void changeOwner(ChangeOwnerInDTO changeOwnerInDTO) throws RestaurantNotFoundException;
 }
