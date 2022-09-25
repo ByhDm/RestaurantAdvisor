@@ -1,6 +1,7 @@
 package com.example.restaurantadvisor.listeners;
 
 import com.example.restaurantadvisor.dto.in.ChangeOwnerInDTO;
+import com.example.restaurantadvisor.exception.OwnerNotFoundException;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.example.restaurantadvisor.service.RestaurantService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -16,7 +17,7 @@ public class RabbitChangeOwner {
     }
 
     @RabbitListener(queues = "myQueueChangeOwner")
-    private void rabbit(@Payload ChangeOwnerInDTO changeOwnerInDTO) throws RestaurantNotFoundException {
+    private void rabbit(@Payload ChangeOwnerInDTO changeOwnerInDTO) throws RestaurantNotFoundException, OwnerNotFoundException {
         System.out.println("change user " + "deleteOwnerDTO");
         restaurantService.changeOwner(changeOwnerInDTO);
     }

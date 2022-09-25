@@ -11,5 +11,5 @@ public interface UserServiceI {
     UserOutDTO update(UserInDTO userInDTO, Long id) throws UserNotFoundException;
     Long deleteUser(Long id) throws UserNotFoundException;
     UserOutDTO getUser(Long id) throws UserNotFoundException;
-    void changePassword(ChangePasswordUserInDTO changePasswordUserInDTO, String email) throws UserNotFoundException;
+    void changePassword(ChangePasswordUserInDTO changePasswordUserInDTO) throws UserNotFoundException;
 }

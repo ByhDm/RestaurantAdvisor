@@ -15,6 +15,7 @@ public interface RestaurantMapper {
 
     RestaurantOutDTO restaurantToRestaurantOutDTO(Restaurant restaurant);
 
+    @Mapping(target = "isDeleted", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "idBoss", ignore = true)
     @Mapping(target = "reviews", ignore = true)

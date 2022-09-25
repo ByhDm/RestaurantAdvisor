@@ -39,13 +39,16 @@ public class UserService implements UserServiceI {
     @Override
     @Transactional
     public UserOutDTO update(UserInDTO userInDTO, Long id) throws UserNotFoundException {
-        if (!userRepository.existsById(id) && userRepository.existsByEmail(userInDTO.getEmail())) {
+        Optional<User> byId = userRepository.findById(id);
+        if (byId.isEmpty()) {
             throw new UserNotFoundException();
         }
-        User user = userMapper.userInDTOToUser(userInDTO);
-        user.setId(id);
-        User saveUser = userRepository.save(user);
-        return userMapper.userToUserOutDTO(saveUser);
+        byId.get().setName(userInDTO.getName());
+        byId.get().setSurname(userInDTO.getSurname());
+        byId.get().setLastname(userInDTO.getLastname());
+        byId.get().setEmail(userInDTO.getEmail());
+        byId.get().setPassword(userInDTO.getPassword());
+        return userMapper.userToUserOutDTO(byId.get());
     }
 
     @Override
@@ -68,15 +71,14 @@ public class UserService implements UserServiceI {
 
     @Override
     @Transactional
-    public void changePassword(ChangePasswordUserInDTO changePasswordUserInDTO, String email) throws UserNotFoundException {
-        Optional<User> byEmail = userRepository.findByEmail(email);
-        if (byEmail.isPresent()) {
+    public void changePassword(ChangePasswordUserInDTO changePasswordUserInDTO) throws UserNotFoundException {
+        Optional<User> byEmail = userRepository.findByEmail(changePasswordUserInDTO.getEmail());
+        if (byEmail.isEmpty()) {
             throw new UserNotFoundException();
         }
-        User user = byEmail.get();
-        if(!Objects.equals(changePasswordUserInDTO.getOldPassword(), user.getPassword())){
+        if(!Objects.equals(changePasswordUserInDTO.getOldPassword(), byEmail.get().getPassword())){
             throw new UserNotFoundException();
         }
-        user.setPassword(changePasswordUserInDTO.getNewPassword());
+        byEmail.get().setPassword(changePasswordUserInDTO.getNewPassword());
     }
 }

@@ -1,8 +1,9 @@
 package com.example.restaurantadvisor.entity;
 
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -17,6 +18,8 @@ import java.util.List;
 @Entity
 @Table(name = "restaurants")
 @Builder
+@SQLDelete(sql = "UPDATE restaurants SET is_deleted = true WHERE id=?")
+@Where(clause = "is_deleted=false")
 public class Restaurant {
 
     @Id
@@ -51,6 +54,9 @@ public class Restaurant {
     @Column(name = "update_datetime")
     @UpdateTimestamp
     private LocalDateTime updatedDateTime;
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
 
     @OneToMany(mappedBy = "restaurant_id"
             , cascade = CascadeType.PERSIST

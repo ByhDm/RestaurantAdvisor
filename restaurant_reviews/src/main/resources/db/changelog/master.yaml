@@ -23,3 +23,9 @@ databaseChangeLog:
       changes:
         - sqlFile:
             path: \db\changelog\change_sets\tables\add_update_datetime.sql
+  - changeSet:
+      id: 5
+      author: dmitriy.bykhov
+      changes:
+        - sqlFile:
+            path: \db\changelog\change_sets\tables\add_column_is_deleted.sql

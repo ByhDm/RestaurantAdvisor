@@ -8,7 +8,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
+    @Mapping(target = "roleName", ignore = true)
     RoleOutDTO roleToRoleOutDTO(Role role);
+    @Mapping(target = "name", ignore = true)
     @Mapping(target = "id", ignore = true)
     Role roleInDTOToRole(RoleInDTO roleInDTO);
 }

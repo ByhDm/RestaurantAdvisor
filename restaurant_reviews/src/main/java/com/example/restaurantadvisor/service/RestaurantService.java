@@ -3,10 +3,12 @@ package com.example.restaurantadvisor.service;
 import com.example.restaurantadvisor.dto.in.AddOwnerInDTO;
 import com.example.restaurantadvisor.dto.in.ChangeOwnerInDTO;
 import com.example.restaurantadvisor.dto.in.DeleteOwnerInDTO;
+import com.example.restaurantadvisor.dto.in.UpdateRestaurantInDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantSmallOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.FoundationDateIsExpiredException;
 import com.example.restaurantadvisor.exception.IncorrectEmailAddressException;
+import com.example.restaurantadvisor.exception.OwnerNotFoundException;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,8 @@ public interface RestaurantService {
     List<RestaurantSmallOutDTO> getSmallList();
     void deleteOwner(DeleteOwnerInDTO deleteOwnerInDTO) throws RestaurantNotFoundException;
     List<Restaurant> getRestaurantByOwnerId(Long idBoss) throws RestaurantNotFoundException;
+    void updateRestaurantById(Long id, UpdateRestaurantInDTO updateRestaurantInDTO) throws RestaurantNotFoundException, OwnerNotFoundException;
     void addOwner(AddOwnerInDTO addOwnerInDTO) throws RestaurantNotFoundException;
-    void changeOwner(ChangeOwnerInDTO changeOwnerInDTO) throws RestaurantNotFoundException;
+    void changeOwner(ChangeOwnerInDTO changeOwnerInDTO) throws RestaurantNotFoundException, OwnerNotFoundException;
+    Long deleteRestaurantById(Long id) throws RestaurantNotFoundException;
 }

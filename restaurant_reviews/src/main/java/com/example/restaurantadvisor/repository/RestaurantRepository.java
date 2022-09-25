@@ -17,7 +17,4 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     List<RestaurantSmall> findSmallRestaurants();
 
     Optional<List<Restaurant>> findAllByIdBoss(Long idBoss);
-    boolean existsRestaurantByIdBoss(Long idBoss);
-    void deleteAllByIdBoss(Long idBoss);
-    void deleteByIdBoss(Long idBoss);
 }

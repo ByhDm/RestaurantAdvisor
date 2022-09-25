@@ -1,12 +1,15 @@
 package com.example.restaurantadvisor.service.impl;
 
+import com.example.restaurantadvisor.clients.UserServiceClient;
 import com.example.restaurantadvisor.dto.in.AddOwnerInDTO;
 import com.example.restaurantadvisor.dto.in.ChangeOwnerInDTO;
 import com.example.restaurantadvisor.dto.in.DeleteOwnerInDTO;
+import com.example.restaurantadvisor.dto.in.UpdateRestaurantInDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantSmallOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
 import com.example.restaurantadvisor.exception.FoundationDateIsExpiredException;
 import com.example.restaurantadvisor.exception.IncorrectEmailAddressException;
+import com.example.restaurantadvisor.exception.OwnerNotFoundException;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.example.restaurantadvisor.mapper.RestaurantMapper;
 import com.example.restaurantadvisor.repository.RestaurantRepository;
@@ -18,6 +21,7 @@ import com.example.restaurantadvisor.util.PhoneUtil;
 import com.google.i18n.phonenumbers.NumberParseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,13 +34,14 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final ReviewRepository reviewRepository;
-
     private final RestaurantMapper restaurantMapper;
+    private final UserServiceClient userServiceClient;
 
-    public RestaurantServiceImpl(RestaurantRepository restaurantRepository, ReviewRepository reviewRepository, RestaurantMapper restaurantMapper) {
+    public RestaurantServiceImpl(RestaurantRepository restaurantRepository, ReviewRepository reviewRepository, RestaurantMapper restaurantMapper, UserServiceClient userServiceClient) {
         this.restaurantRepository = restaurantRepository;
         this.reviewRepository = reviewRepository;
         this.restaurantMapper = restaurantMapper;
+        this.userServiceClient = userServiceClient;
     }
 
     @Override
@@ -152,6 +157,23 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     @Transactional
+    public void updateRestaurantById(Long id, UpdateRestaurantInDTO updateRestaurantInDTO) throws RestaurantNotFoundException, OwnerNotFoundException {
+        Optional<Restaurant> byId = restaurantRepository.findById(id);
+        if (byId.isEmpty()) {
+            throw new RestaurantNotFoundException(id);
+        }
+        if (userServiceClient.getUser(updateRestaurantInDTO.getIdBoss()).getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+            throw new OwnerNotFoundException();
+        }
+        byId.get().setName(updateRestaurantInDTO.getName());
+        byId.get().setIdBoss(updateRestaurantInDTO.getIdBoss());
+        byId.get().setEmail(updateRestaurantInDTO.getEmail());
+        byId.get().setPhoneNumber(updateRestaurantInDTO.getPhoneNumber());
+        byId.get().setDescription(updateRestaurantInDTO.getDescription());
+    }
+
+    @Override
+    @Transactional
     public List<String> getReviewsRestaurantByName(String name) {
         return reviewRepository.getReviewByName(name);
     }
@@ -174,12 +196,8 @@ public class RestaurantServiceImpl implements RestaurantService {
         Long idBoss = deleteOwnerInDTO.getIdBoss();
         List<Restaurant> restaurants = getRestaurantByOwnerId(idBoss);
         for (Restaurant restaurant : restaurants) {
-            Long id = restaurant.getId();
-            Optional<Restaurant> byId = restaurantRepository.findById(id);
-            if (byId.isEmpty()) {
-                throw new RestaurantNotFoundException(id);
-            }
-            byId.get().setIdBoss(null);
+            restaurant.setIdBoss(null);
+            restaurantRepository.save(restaurant);
         }
     }
 
@@ -192,6 +210,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         return byIdBoss.get();
     }
 
+    @Transactional
     @Override
     public void addOwner(AddOwnerInDTO addOwnerInDTO) throws RestaurantNotFoundException {
         Optional<Restaurant> byId = restaurantRepository.findById(addOwnerInDTO.getRestaurantId());
@@ -199,19 +218,31 @@ public class RestaurantServiceImpl implements RestaurantService {
             throw new RestaurantNotFoundException(addOwnerInDTO.getRestaurantId());
         }
         byId.get().setIdBoss(addOwnerInDTO.getIdBoss());
+        restaurantRepository.save(byId.get());
     }
 
+    @Transactional
     @Override
-    public void changeOwner(ChangeOwnerInDTO changeOwnerInDTO) throws RestaurantNotFoundException {
+    public void changeOwner(ChangeOwnerInDTO changeOwnerInDTO) throws RestaurantNotFoundException, OwnerNotFoundException {
         Long idBoss = changeOwnerInDTO.getOldIdBoss();
         List<Restaurant> restaurants = getRestaurantByOwnerId(idBoss);
         for (Restaurant restaurant : restaurants) {
-            Long id = restaurant.getId();
-            Optional<Restaurant> byId = restaurantRepository.findById(id);
-            if (byId.isEmpty()) {
-                throw new RestaurantNotFoundException(id);
+            if (userServiceClient.getUser(changeOwnerInDTO.getNewIdBoss()).getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+                throw new OwnerNotFoundException();
             }
-            byId.get().setIdBoss(changeOwnerInDTO.getNewIdBoss());
+            restaurant.setIdBoss(changeOwnerInDTO.getNewIdBoss());
+            restaurantRepository.save(restaurant);
         }
+    }
+
+    @Transactional
+    @Override
+    public Long deleteRestaurantById(Long id) throws RestaurantNotFoundException {
+        Optional<Restaurant> byId = restaurantRepository.findById(id);
+        if (byId.isEmpty()) {
+            throw new RestaurantNotFoundException(id);
+        }
+        restaurantRepository.deleteById(id);
+        return id;
     }
 }

@@ -1,12 +1,10 @@
 package com.example.restaurantadvisor.controller;
 
-import com.example.restaurantadvisor.dto.in.AddOwnerInDTO;
-import com.example.restaurantadvisor.dto.in.ChangeOwnerInDTO;
-import com.example.restaurantadvisor.dto.in.DeleteOwnerInDTO;
-import com.example.restaurantadvisor.dto.in.RestaurantInDTO;
+import com.example.restaurantadvisor.dto.in.*;
 import com.example.restaurantadvisor.dto.out.RestaurantOutDTO;
 import com.example.restaurantadvisor.dto.out.RestaurantSmallOutDTO;
 import com.example.restaurantadvisor.entity.Restaurant;
+import com.example.restaurantadvisor.exception.OwnerNotFoundException;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
 import com.example.restaurantadvisor.mapper.RestaurantMapper;
 import com.example.restaurantadvisor.service.RestaurantService;
@@ -182,6 +180,18 @@ public class RestaurantController {
         return restaurantService.getSmallList();
     }
 
+    @Operation(summary = "Delete restaurant by id")
+    @DeleteMapping("/{id}")
+    public Long deleteRestaurantById(@PathVariable Long id) throws RestaurantNotFoundException{
+        return restaurantService.deleteRestaurantById(id);
+    }
+
+    @Operation(summary = "Update restaurant by id")
+    @PutMapping("/{id}")
+    void updateRestaurantById(@PathVariable Long id, @RequestBody @Valid UpdateRestaurantInDTO updateRestaurantInDTO) throws RestaurantNotFoundException, OwnerNotFoundException {
+        restaurantService.updateRestaurantById(id, updateRestaurantInDTO);
+    }
+
     @Operation(summary = "Delete owner")
     @ApiResponses(value = {
             @ApiResponse(
@@ -223,7 +233,7 @@ public class RestaurantController {
             )
     })
     @PostMapping("/owner/change")
-    public void changeOwner(@RequestBody ChangeOwnerInDTO changeOwnerInDTO) throws RestaurantNotFoundException {
+    public void changeOwner(@RequestBody ChangeOwnerInDTO changeOwnerInDTO) throws RestaurantNotFoundException, OwnerNotFoundException {
         restaurantService.changeOwner(changeOwnerInDTO);
     }
 

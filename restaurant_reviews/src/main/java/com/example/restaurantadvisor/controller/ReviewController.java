@@ -2,7 +2,6 @@ package com.example.restaurantadvisor.controller;
 
 import com.example.restaurantadvisor.dto.in.ReviewInDTO;
 import com.example.restaurantadvisor.exception.RestaurantNotFoundException;
-import com.example.restaurantadvisor.mapper.ReviewMapper;
 import com.example.restaurantadvisor.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,11 +16,8 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    private final ReviewMapper reviewMapper;
-
-    public ReviewController(ReviewService reviewService, ReviewMapper reviewMapper) {
+    public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
-        this.reviewMapper = reviewMapper;
     }
 
     @Operation(summary = "Add review")

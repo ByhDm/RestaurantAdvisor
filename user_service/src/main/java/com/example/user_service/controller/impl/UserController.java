@@ -49,12 +49,11 @@ public class UserController implements UserControllerI {
 
     @Override
     public UserOutDTO getUser(Long id) throws UserNotFoundException {
-        rabbitTemplate.convertSendAndReceive("myQueue", "Hello, world!", String.class);
         return userService.getUser(id);
     }
 
     @Override
-    public void changePassword(String email, ChangePasswordUserInDTO changePasswordUserInDTO) throws UserNotFoundException {
-        userService.changePassword(changePasswordUserInDTO, email);
+    public void changePassword(ChangePasswordUserInDTO changePasswordUserInDTO) throws UserNotFoundException {
+        userService.changePassword(changePasswordUserInDTO);
     }
 }

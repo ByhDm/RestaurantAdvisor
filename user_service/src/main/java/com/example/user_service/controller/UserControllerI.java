@@ -94,8 +94,8 @@ public interface UserControllerI {
                     description = "password is not valid"
             )
     })
-    @PutMapping("/{email}/password")
-    void changePassword(@PathVariable String email, @RequestBody @Valid ChangePasswordUserInDTO changePasswordUserInDTO) throws UserNotFoundException;
+    @PutMapping("/password")
+    void changePassword(@RequestBody @Valid ChangePasswordUserInDTO changePasswordUserInDTO) throws UserNotFoundException;
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
