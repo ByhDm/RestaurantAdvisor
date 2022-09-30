@@ -33,6 +33,7 @@ class UserServiceITest extends UserServiceApplicationTests {
         userInDTO.setSurname("Surname1");
         userInDTO.setLastname("Lastname1");
         userInDTO.setEmail("email2@net.net");
+        userInDTO.setPassword("123456");
         UserOutDTO user = userService.createUser(userInDTO);
         UserOutDTO userOutDTO = userService.update(userInDTO, user.getId());
         assertEquals(user, userOutDTO);

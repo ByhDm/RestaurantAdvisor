@@ -33,6 +33,7 @@ public class RestaurantServiceTest extends RestaurantAdvisorApplicationTests {
         restaurant.setEmail("astoria@astoria.com");
         restaurant.setDescription("Test description 1");
         restaurant.setDate(LocalDate.of(2015, 1,13));
+        restaurant.setIsDeleted(false);
         restaurantService.addRestaurant(restaurant);
         reviewService.addReview(restaurantService.getAllRestaurants(Pageable.unpaged()).toList().get(0).getId(), "Good restaurant", 1);
         Restaurant restaurant2 = new Restaurant();
@@ -40,6 +41,7 @@ public class RestaurantServiceTest extends RestaurantAdvisorApplicationTests {
         restaurant2.setEmail("asia@asia.com");
         restaurant2.setDescription("Test description 2");
         restaurant2.setDate(LocalDate.of(2015, 10,13));
+        restaurant2.setIsDeleted(false);
         restaurantService.addRestaurant(restaurant2);
     }
 

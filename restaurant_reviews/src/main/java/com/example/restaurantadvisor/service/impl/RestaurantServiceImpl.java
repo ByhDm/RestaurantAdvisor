@@ -57,6 +57,7 @@ public class RestaurantServiceImpl implements RestaurantService {
         } else {
             restaurant.setPhoneNumber(PhoneUtil.reformatRuTelephone(phone));
         }
+        restaurant.setIsDeleted(false);
         return restaurantRepository.save(restaurant);
     }
 
@@ -77,7 +78,7 @@ public class RestaurantServiceImpl implements RestaurantService {
             throw new RestaurantNotFoundException(restaurantRepository.findFirstByName(name).getId());
         } else {
             restaurant.setDescription(description);
-            restaurantRepository.save(restaurant); //     @Transactional
+            restaurantRepository.save(restaurant);
         }
     }
 
